@@ -1,0 +1,13 @@
+.app-header {
+    background-color: #222;
+    height: 36px;
+    padding: 8px;
+}
+
+.profile-pic {
+    float: right;
+} 
+
+.header-title {
+    color: white;
+}
