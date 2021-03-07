@@ -20,7 +20,7 @@ const styles = theme => ({
       width: '300px',
     },
     searchIcon: {
-      width: theme.spacing(4),
+      width: theme.spacing.unit * 4,
       height: '100%',
       position: 'absolute',
       pointerEvents: 'none',
@@ -33,7 +33,7 @@ const styles = theme => ({
       paddingTop: theme.spacing,
       paddingRight: theme.spacing,
       paddingBottom: theme.spacing,
-      paddingLeft: theme.spacing(4),
+      paddingLeft: theme.spacing.unit * 4,
       transition: theme.transitions.create('width'),
       width: '100%',
       [theme.breakpoints.up('sm')]: {
@@ -68,7 +68,7 @@ class Header extends Component {
             <AppBar className={classes.appHeader}>
               <Toolbar>
                 
-                <span className="header-title">Image Viewer</span>
+                <span className="logo">Image Viewer</span>
                 <div className={classes.grow}/>
     
                   <div className={classes.search}>
