@@ -20,6 +20,8 @@ import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import {constants} from '../../common/utils'
 
+// ************************************** STYLES ******************************************************* 
+
 const styles =  theme => ({
   card: {
     maxWidth: 1100,
@@ -58,6 +60,7 @@ const styles =  theme => ({
   }
 });
 
+// **************************************** Home Component *****************************************************************
 class Home extends Component{
 
   constructor(props) {
@@ -67,13 +70,15 @@ class Home extends Component{
     }
     this.state = {
       data: [],
-      filteredData:[],
+      additionalData:[],
       userData:[],
       likeSet:new Set(),
       comments:{},
       currrentComment:"",
       userInfo:[],
-      likes: 0
+      likes: 0,
+      filteredImgs: [],
+      searchString: ""
     }
   }
 
@@ -83,23 +88,31 @@ class Home extends Component{
 
   render(){
     const{classes} = this.props;
+    let filteredData = this.state.filteredImgs.filter( 
+      (img) => { if (typeof img.caption === "undefined") { img.caption = "Far Hills, NJ"; } 
+                    return img.caption.toLowerCase().indexOf(this.state.searchString.toLowerCase()) !== -1;
+                
+    }
+    );
     return(
       <div>
+
         <Header
           userProfileUrl="profile.png"
           screen={"Home"}
           searchHandler={this.onSearchEntered}
           handleLogout={this.logout}
-          handleAccount={this.navigateToAccount}/>
+          handleAccount={this.navigateToAccount}
+        />
         
         <div className={classes.grid}>
           <GridList className={classes.gridList} cellHeight={'auto'}>
-            {this.state.filteredData.map((item, index) => (
+            {this.state.additionalData.map((item, index) => (
               <GridListTile key={item.id}>
                 <HomeItem
                   classes={classes}
                   item={item}
-                  userInfo={this.state.userInfo}
+                  userInfo= {filteredData}  
                   onLikedClicked={this.likeClickHandler}
                   onAddCommentClicked={this.addCommentClickHandler}
                   commentChangeHandler={this.commentChangeHandler}
@@ -112,17 +125,11 @@ class Home extends Component{
     );
   }
 
-  onSearchEntered = (value) =>{
-    console.log('search value', value);
-    let filteredData = this.state.userInfo;
-    filteredData = filteredData.filter((data) =>{
-      let string = data.caption.toLowerCase();
-      let subString = value.toLowerCase();
-      return string.includes(subString);
-    })
-    this.setState({
-      userInfo: filteredData
-    })
+// ********************** FUNCTIONS / HANDLERS USED FOR HOME ******************************************************* */
+
+onSearchEntered = (value) =>{
+  this.setState({searchString: value})
+  this.setState({searchActive: true})
   }
 
   addCommentClickHandler = (id)=>{
@@ -158,7 +165,8 @@ class Home extends Component{
         return response.json();
     }).then((jsonResponse) =>{
       that.setState({
-        userInfo:jsonResponse.data
+        userInfo:jsonResponse.data,
+        filteredImgs: jsonResponse.data
       });
       this.state.userInfo.map((data, index) => (
           this.getMediaData(data.id)
@@ -177,7 +185,7 @@ class Home extends Component{
         return response.json();
     }).then((jsonResponse) =>{
       that.setState({
-        filteredData: this.state.filteredData.concat(jsonResponse)
+        additionalData: this.state.additionalData.concat(jsonResponse)
       })
     }).catch((error) => {
       console.log('error user data',error);
@@ -193,6 +201,7 @@ class Home extends Component{
     this.props.history.push('/profile');
   }
 }
+// ********************************************* HOMEITEM COMPONENT ******************************************************
 
 class HomeItem extends Component{
   constructor(){
@@ -306,6 +315,10 @@ class HomeItem extends Component{
     }
   }
 
+// ************************************ HANDLERS USED IN HOMEITEM ****************************************
+
+// *********************lIKE HANDLER ***************** 
+
   onLikeClicked = (id) => {
     // Here, we are converting the likes symbol from white to pink and also incrementing/decrementing the number of likes
 
@@ -329,6 +342,7 @@ class HomeItem extends Component{
     }
   }
 
+// *************************************** COMMENT CHANGE HANDLER ******************************************
   commentChangeHandler = (e) => {
     this.setState({
       comment:e.target.value,
@@ -336,6 +350,7 @@ class HomeItem extends Component{
     this.props.commentChangeHandler(e);
   }
 
+// ***************************************** COMMENT ADD HANDLER ******************************
   onAddCommentClicked = (id) => {
     // Here, we are adding comments into the comment section
 
