@@ -129,7 +129,6 @@ class Home extends Component{
 
 onSearchEntered = (value) =>{
   this.setState({searchString: value})
-  this.setState({searchActive: true})
   }
 
   addCommentClickHandler = (id)=>{
@@ -159,37 +158,30 @@ onSearchEntered = (value) =>{
   getBaseUserInfo = () => {
     let that = this;
     let url = `${constants.userInfoUrl}=${sessionStorage.getItem('access-token')}`;
-    return fetch(url,{
-      method:'GET',
-    }).then((response) =>{
-        return response.json();
-    }).then((jsonResponse) =>{
-      that.setState({
+    return fetch(url)
+      .then(response => response.json())
+      .then(jsonResponse => 
+        {
+        that.setState({
         userInfo:jsonResponse.data,
         filteredImgs: jsonResponse.data
-      });
-      this.state.userInfo.map((data, index) => (
+        })
+          this.state.userInfo.map((data, index) => (
           this.getMediaData(data.id)
-      ));
-    }).catch((error) => {
-      console.log('error user data',error);
-    });
+          ))
+        })
+        .catch(error => console.log('error user data',error))
   }
 
   getMediaData = (id) => {
     let that = this;
     let url = `${constants.userMediaUrl}/${id}?fields=id,media_type,media_url,username,timestamp&access_token=&access_token=${sessionStorage.getItem('access-token')}`;
-    return fetch(url,{
-      method:'GET',
-    }).then((response) =>{
-        return response.json();
-    }).then((jsonResponse) =>{
-      that.setState({
-        additionalData: this.state.additionalData.concat(jsonResponse)
-      })
-    }).catch((error) => {
-      console.log('error user data',error);
-    });
+    return fetch(url)
+      .then(response => response.json())
+      .then(jsonResponse =>
+      that.setState({additionalData: this.state.additionalData.concat(jsonResponse)})
+      )
+      .catch(error => console.log('error user data',error))
   }
 
   logout = () => {
