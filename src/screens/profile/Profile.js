@@ -70,10 +70,12 @@ class Profile extends Component {
     
     profilePicture = 'profile.png'
 
+//Fetch Data from Instagram on Mount
     componentDidMount(){
         this.getBaseUserInfo();
     }
 
+//Get data from 1st API
     getBaseUserInfo = () => {
         let that = this;
         let url = `${constants.userInfoUrl}=${sessionStorage.getItem('access-token')}`;
@@ -91,7 +93,7 @@ class Profile extends Component {
             console.log('error user data',error);
         });
     }
-
+//Get Additional Data from the second API
     getMediaData = (id) => {
         let that = this;
         let url = `${constants.userMediaUrl}/${id}?fields=id,media_type,media_url,username,timestamp&access_token=&access_token=${sessionStorage.getItem('access-token')}`;
@@ -120,7 +122,6 @@ class Profile extends Component {
         var mediaResult = this.state.additionalData.find(item => {
             return item.id === event.target.id
         })
-        console.log(result);
         this.setState({ imageModalOpen: true, currentItem: result, mediaData: mediaResult});
     }
 
@@ -176,7 +177,6 @@ class Profile extends Component {
     onAddCommentClicked = (id) => {
       // Here, we are adding comments into the comment section
 
-      console.log('id',id);
       if (this.state.currentComment === "" || typeof this.state.currentComment === undefined) {
         return;
       }
